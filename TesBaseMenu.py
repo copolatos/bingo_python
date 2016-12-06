@@ -33,6 +33,11 @@ class MenuItem(pygame.font.Font):
             return True
         return False
 
+    def set_index(self, index):
+        self.indexpos = index
+
+    def check_index(self):
+        return self.indexpos
 
 class GameMenu():
     def __init__(self, screen, items, bg_color=(0, 0, 0), font=None, font_size=30,
@@ -45,6 +50,7 @@ class GameMenu():
         self.clock = pygame.time.Clock()
 
         self.items = []
+        i = 1
         for index, item in enumerate(items):
             menu_item = MenuItem(item)  # , '/home/nebelhom/.fonts/SHOWG.TTF')
 
@@ -56,7 +62,9 @@ class GameMenu():
             pos_y = (self.scr_height / 2) - (t_h / 2) + ((index * 2) + index * menu_item.height)
 
             menu_item.set_position(pos_x, pos_y)
+            menu_item.set_index(i)
             self.items.append(menu_item)
+            i+=1
 
     def run(self):
         mainloop = True
@@ -75,6 +83,10 @@ class GameMenu():
                 if item.is_mouse_selection(pygame.mouse.get_pos()):
                     item.set_font_color((255, 0, 0))
                     item.set_italic(True)
+                    if item.check_index() == 1 and pygame.mouse.get_pressed()[0]:
+                        print 'SHYIQAD MIRINGZ'
+                    elif item.check_index() == 2 and pygame.mouse.get_pressed()[0]:
+                        exit()
                 else:
                     item.set_font_color((255, 255, 255))
                     item.set_italic(False)
@@ -87,8 +99,8 @@ if __name__ == "__main__":
     # Creating the screen
     screen = pygame.display.set_mode((320, 240), 0, 32)
 
-    menu_items = ('Start', 'Quit')
+    menu_items = ('PLAY', 'QUIT')
 
-    pygame.display.set_caption('SIMPLE MENU')
+    pygame.display.set_caption('SIMPLE BINGO')
     gm = GameMenu(screen, menu_items)
     gm.run()
