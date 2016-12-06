@@ -61,8 +61,8 @@ class GameMenu():
     def run(self):
         mainloop = True
         while mainloop:
-            # Limit frame speed to 50 FPS
-            self.clock.tick(50)
+            # Limit frame speed to 60 FPS
+            self.clock.tick(60)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -85,10 +85,10 @@ class GameMenu():
 
 if __name__ == "__main__":
     # Creating the screen
-    screen = pygame.display.set_mode((640, 480), 0, 32)
+    screen = pygame.display.set_mode((320, 240), 0, 32)
 
     menu_items = ('Start', 'Quit')
 
-    pygame.display.set_caption('Game Menu')
+    pygame.display.set_caption('SIMPLE MENU')
     gm = GameMenu(screen, menu_items)
     gm.run()
