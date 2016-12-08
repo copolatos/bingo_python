@@ -3,7 +3,6 @@ from pygame.locals import *
 
 pygame.init()
 
-
 class BoardItem(pygame.font.Font):
     def __init__(self, text, font=None, font_size=96,
                  font_color=(255, 255, 255), (pos_x, pos_y)=(0, 0)):
@@ -59,7 +58,6 @@ class Board():
             menu_item.set_position(pos_x, pos_y)
             self.items.append(menu_item)
             i += 1
-
     def run(self):
         mainloop = True
         while mainloop:
@@ -84,10 +82,8 @@ class Board():
 
 
 def board_numbers():
-    pygame.init()
     number = ""
     font = pygame.font.Font(None, 96)
-
     board = [0, 0, 0, 0, 0,
              0, 0, 0, 0, 0,
              0, 0, 0, 0, 0,
@@ -97,8 +93,11 @@ def board_numbers():
     j = 0
     while sum(board) < 325:
         if pygame.mouse.get_pressed()[0]:
-            i = pygame.mouse.get_pos()[0] / 96
-            j = pygame.mouse.get_pos()[1] / 96
+            tempi = pygame.mouse.get_pos()[0] / 96
+            tempj = pygame.mouse.get_pos()[1] / 96
+            if board[tempj*5 + tempi] == 0:
+                i = tempi
+                j = tempj
         for evt in pygame.event.get():
             if evt.type == KEYDOWN:
                 if not evt.unicode.isalpha():
@@ -112,11 +111,32 @@ def board_numbers():
                     elif (evt.key == K_RETURN or evt.key == K_KP_ENTER) and number != "":
                         if int(number) not in board and int(number) < 26:
                             board[j*5 + i] = int(number)
-                            if i == 4:
-                                i = 0
-                                j+= 1
+                            if j*5 + i < 24:
+                                if i == 4:
+                                    i = 0
+                                    j+= 1
+                                else:
+                                    i+=1
+                                if board[j*5 + i] != 0:
+                                    reccur = 0
+                                    while 1:
+                                        if reccur >= 24:
+                                            break
+                                        elif board[reccur] == 0:
+                                            j = reccur / 5
+                                            i = reccur - j * 5
+                                            break
+                                        reccur += 1
                             else:
-                                i+=1
+                                reccur = 0
+                                while 1:
+                                    if reccur >= 24:
+                                        break
+                                    elif board[reccur] == 0:
+                                        j = reccur / 5
+                                        i = reccur - j*5
+                                        break
+                                    reccur+=1
                         number = ""
             elif evt.type == QUIT:
                 return
@@ -137,8 +157,6 @@ def board_numbers():
         block = font.render(number, True, (255, 255, 255))
         screen.blit(block, (i * screen.get_rect().width/5, j*screen.get_rect().height/5))
         pygame.display.flip()
-
-
     gm = Board(screen, board)
     gm.run()
 
