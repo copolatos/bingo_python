@@ -77,11 +77,19 @@ class Board():
                     item.set_font_color((255, 255, 255))
                     item.set_italic(False)
                 self.screen.blit(item.label, item.position)
-
+            pygame.draw.polygon(screen, (255, 255, 255), ((95, 0), (97, 0), (97, 480), (95, 480)), 0)
+            pygame.draw.polygon(screen, (255, 255, 255), ((191, 0), (193, 0), (193, 480), (191, 480)), 0)
+            pygame.draw.polygon(screen, (255, 255, 255), ((287, 0), (289, 0), (289, 480), (287, 480)), 0)
+            pygame.draw.polygon(screen, (255, 255, 255), ((383, 0), (385, 0), (385, 480), (383, 480)), 0)
+            pygame.draw.polygon(screen, (255, 255, 255), ((0, 95), (0, 97), (480, 97), (480, 95)), 0)
+            pygame.draw.polygon(screen, (255, 255, 255), ((0, 191), (0, 193), (480, 193), (480, 191)), 0)
+            pygame.draw.polygon(screen, (255, 255, 255), ((0, 287), (0, 289), (480, 289), (480, 287)), 0)
+            pygame.draw.polygon(screen, (255, 255, 255), ((0, 383), (0, 385), (480, 385), (480, 383)), 0)
             pygame.display.flip()
 
 
 def board_numbers():
+    pygame.draw.polygon(screen, (255, 255, 255), ((95, 0), (97, 0), (97, 480), (95, 480)), 0)
     number = ""
     font = pygame.font.Font(None, 96)
     board = [0, 0, 0, 0, 0,
@@ -156,6 +164,14 @@ def board_numbers():
             m+=1
         block = font.render(number, True, (255, 255, 255))
         screen.blit(block, (i * screen.get_rect().width/5, j*screen.get_rect().height/5))
+        pygame.draw.polygon(screen, (255, 255, 255), ((95, 0), (97, 0), (97, 480), (95, 480)), 0)
+        pygame.draw.polygon(screen, (255, 255, 255), ((191, 0), (193, 0), (193, 480), (191, 480)), 0)
+        pygame.draw.polygon(screen, (255, 255, 255), ((287, 0), (289, 0), (289, 480), (287, 480)), 0)
+        pygame.draw.polygon(screen, (255, 255, 255), ((383, 0), (385, 0), (385, 480), (383, 480)), 0)
+        pygame.draw.polygon(screen, (255, 255, 255), ((0, 95), (0, 97), (480, 97), (480, 95)), 0)
+        pygame.draw.polygon(screen, (255, 255, 255), ((0, 191), (0, 193), (480, 193), (480, 191)), 0)
+        pygame.draw.polygon(screen, (255, 255, 255), ((0, 287), (0, 289), (480, 289), (480, 287)), 0)
+        pygame.draw.polygon(screen, (255, 255, 255), ((0, 383), (0, 385), (480, 385), (480, 383)), 0)
         pygame.display.flip()
     gm = Board(screen, board)
     gm.run()
