@@ -6,20 +6,20 @@ from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
 
 class ClientChannel(Channel):
-	"""
-	This is the server representation of a single connected client.
-	"""
 	def __init__(self, *args, **kwargs):
 		self.nickname = "anonymous"
 		Channel.__init__(self, *args, **kwargs)
-	
+		
 	def Close(self):
 		self._server.DelPlayer(self)
-	
-	def Network_nickname(self, data):
-		self.nickname = data['nickname']
-		self._server.SendPlayers()
 
+	def Network_login(self, data):
+		self.nickname = data['nickname']
+		print data['nickname']
+
+	def Network_list(self, data):
+		print self.nickname
+	
 class ChatServer(Server):
 	channelClass = ClientChannel
 	
@@ -32,10 +32,11 @@ class ChatServer(Server):
 		self.AddPlayer(channel)
 	
 	def AddPlayer(self, player):
-		print "New Player Connected" + str(player.addr)
+		#print "New Player Connected" + str(player.addr)
+		#print "New Player Connected" + p.nickname
 		self.players[player] = True
 		self.SendPlayers()
-		print "players", [p for p in self.players]
+		#print "players", [p for p in self.players]
 	
 	def DelPlayer(self, player):
 		print "Deleting Player" + str(player.addr)
@@ -44,7 +45,7 @@ class ChatServer(Server):
 	
 	def SendPlayers(self):
 		self.SendToAll({"action": "players", "players": [p.nickname for p in self.players]})
-	
+
 	def SendToAll(self, data):
 		[p.Send(data) for p in self.players]
 	
