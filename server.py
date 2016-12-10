@@ -15,10 +15,9 @@ class ClientChannel(Channel):
 
 	def Network_login(self, data):
 		self.nickname = data['nickname']
-		print data['nickname']
 
 	def Network_list(self, data):
-		print self.nickname
+		self._server.ListPlayers()
 	
 class ChatServer(Server):
 	channelClass = ClientChannel
@@ -31,6 +30,9 @@ class ChatServer(Server):
 	def Connected(self, channel, addr):
 		self.AddPlayer(channel)
 	
+	def ListPlayers(self):
+		print "List User : " , [p.nickname for p in self.players]
+
 	def AddPlayer(self, player):
 		#print "New Player Connected" + str(player.addr)
 		#print "New Player Connected" + p.nickname
