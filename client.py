@@ -25,11 +25,21 @@ class Client(ConnectionListener):
 	def InputLoop(self):
 		connection.Send({"action": "list"})
 		while 1:
-			connection.Send({"action": "message", "message": stdin.readline().rstrip("\n")})
+			connection.Send({"action": "playermove", "message": stdin.readline().rstrip("\n")})
 	
 	#######################################
 	### Network event/message callbacks ###
 	#######################################
+
+	def Network_message(self, data):
+		print data['message']
+
+	def Network_playermove(selt, data):
+		print data['message']
+
+#	def Network_responselogin(self, data):
+#		if(data["status"] == 1):
+#			print "Selamat Datang, Selamat Bermain"
 
 	def Network_connected(self, data):
 		print "Selamat Datang, Selamat Bermain"

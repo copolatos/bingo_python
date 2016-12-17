@@ -8,6 +8,7 @@ from PodSixNet.Channel import Channel
 class ClientChannel(Channel):
 	def __init__(self, *args, **kwargs):
 		self.nickname = "anonymous"
+		self.room = ""
 		Channel.__init__(self, *args, **kwargs)
 		
 	def Close(self):
@@ -15,23 +16,30 @@ class ClientChannel(Channel):
 
 	def Network_login(self, data):
 		self.nickname = data['nickname']
+		#self.Send({"action": "responselogin", "status": 1})
 
 	def Network_list(self, data):
 		self._server.ListPlayers()
 	
+	def Network_playermove(self,data):
+		#self.move = data["message"]
+		self._server.SendToAll({"action": "playermove", "message": data["message"]})
+
 class ChatServer(Server):
 	channelClass = ClientChannel
 	
 	def __init__(self, *args, **kwargs):
 		Server.__init__(self, *args, **kwargs)
 		self.players = WeakKeyDictionary()
+		print self.players
 		print 'Server launched'
 	
 	def Connected(self, channel, addr):
 		self.AddPlayer(channel)
+		#print channel, addr
 	
 	def ListPlayers(self):
-		print "List User : " , [p.nickname for p in self.players]
+		print "List User : ", [p.nickname for p in self.players]
 
 	def AddPlayer(self, player):
 		#print "New Player Connected" + str(player.addr)
