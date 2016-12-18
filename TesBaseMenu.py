@@ -1,4 +1,6 @@
 import pygame
+import time
+import client
 
 pygame.init()
 
@@ -52,13 +54,11 @@ class GameMenu():
         self.items = []
         i = 1
         for index, item in enumerate(items):
-            menu_item = MenuItem(item)  # , '/home/nebelhom/.fonts/SHOWG.TTF')
+            menu_item = MenuItem(item)
 
             # t_h: total height of text block
             t_h = len(items) * menu_item.height
             pos_x = (self.scr_width / 2) - (menu_item.width / 2)
-            # This line includes a bug fix by Ariel (Thanks!)
-            # Please check the comments section for an explanation
             pos_y = (self.scr_height / 2) - (t_h / 2) + ((index * 2) + index * menu_item.height)
 
             menu_item.set_position(pos_x, pos_y)
@@ -76,7 +76,6 @@ class GameMenu():
                 if event.type == pygame.QUIT:
                     mainloop = False
 
-            # Redraw the background
             self.screen.fill(self.bg_color)
 
             for item in self.items:
@@ -84,7 +83,8 @@ class GameMenu():
                     item.set_font_color((255, 0, 0))
                     item.set_italic(True)
                     if item.check_index() == 1 and pygame.mouse.get_pressed()[0]:
-                        print 'SHYIQAD MIRINGZ'
+                        client.main()
+                        pygame.display.set_mode((320, 240), 0, 32)
                     elif item.check_index() == 2 and pygame.mouse.get_pressed()[0]:
                         exit()
                 else:
@@ -96,7 +96,6 @@ class GameMenu():
 
 
 if __name__ == "__main__":
-    # Creating the screen
     screen = pygame.display.set_mode((320, 240), 0, 32)
 
     menu_items = ('PLAY', 'QUIT')
