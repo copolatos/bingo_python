@@ -66,6 +66,26 @@ def name():
 
     my_string = "" 
 
+    pygame.draw.polygon(display, (255, 255, 255), ((0, 250), (0, 255), (480, 255), (480, 250)), 0)
+    pygame.draw.polygon(display, (255, 255, 255), ((0, 405), (0, 410), (480, 410), (480, 405)), 0)
+    pygame.draw.polygon(display, (48,48,48), ((10, 265), (10, 395), (470, 395), (470, 265)), 0)
+
+    pygame.draw.polygon(display, (48,48,48), ((10, 240), (10, 152), (94, 152), (94, 240)), 0)
+    pygame.draw.polygon(display, (48,48,48), ((104, 240), (104, 152), (188, 152), (188, 240)), 0)
+    pygame.draw.polygon(display, (48,48,48), ((198, 240), (198, 152), (282, 152), (282, 240)), 0)
+    pygame.draw.polygon(display, (48,48,48), ((292, 240), (292, 152), (376, 152), (376, 240)), 0)
+    pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
+
+    tes_surface=pygame.draw.polygon(display, (48,48,48), ((10, 142), (10, 40), (470, 40), (470, 142)), 0)
+
+    rd_font = pygame.font.Font(None, 70)
+    screen_text = rd_font.render("READY",True,(255,255,255))
+    screen_text_r=screen_text.get_rect()
+    screen_text_r.x,screen_text_r.y=160,70
+    tes_surface.top=20
+    tes_surface.left = 160
+    #pygame.display.update()
+    
     my_rect = pygame.Rect((40, 45, 460, 45))
     my_rect.left = 10
     my_rect.bottom = 470
@@ -89,6 +109,15 @@ def name():
                         my_string += " "
                 elif evt.key == K_ESCAPE:
                     return
+        if screen_text_r.collidepoint(pygame.mouse.get_pos()):
+            screen_text = rd_font.render("READY",True,(0,0,0))
+            display.blit(screen_text,tes_surface.midleft)
+        else:
+            screen_text = rd_font.render("READY",True,(255,255,255))
+            display.blit(screen_text,tes_surface.midleft)
+        #if screen_text.is_mouse_selection(pygame.mouse.get_pos()):
+         #   screen_text.set_font_color((255, 0, 0))
+          #  screen_text.set_italic(True)
         tes+=1
         if tes%5000==0:
             my_string+='|'
