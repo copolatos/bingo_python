@@ -36,6 +36,9 @@ class Client(ConnectionListener):
     ### Network event/message callbacks ###
     #######################################
 
+    def Network_playermove(self, data):
+        print data['message']
+
     def Network_connected(self, data):
         print "Selamat Datang, Selamat Bermain"
 
@@ -123,7 +126,7 @@ class Board():
                     pygame.draw.polygon(screen, (255, 255, 255), ((item.pos_x/96*96+94, item.pos_y/96*96), (item.pos_x/96*96+96, item.pos_y/96*96+1),(item.pos_x / 96 * 96 + 1, item.pos_y / 96 * 96 + 96),(item.pos_x/96*96, item.pos_y/96*96+95)), 0)
                 if item.is_mouse_selection(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0] and item.handle == False:
-                        connection.Send({"action": "message", "message": item.text})
+                        connection.Send({"action": "playermove", "move": item.text})
                         item.handle=True
                         state[item.pos_x / 96 + (item.pos_y / 96) * 5] = 0
                         for i in range(0, 5):

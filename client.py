@@ -34,7 +34,7 @@ class Client(ConnectionListener):
 	def Network_message(self, data):
 		print data['message']
 
-	def Network_playermove(selt, data):
+	def Network_playermove(self, data):
 		print data['message']
 
 #	def Network_responselogin(self, data):

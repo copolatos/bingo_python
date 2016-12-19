@@ -1,7 +1,8 @@
 import pygame
 from pygame.locals import *
-
+from PodSixNet.Connection import connection, ConnectionListener
 flag=0
+
 pygame.init()
 
 def render_textrect(string, font, rect, text_color, background_color, justification=0):
@@ -25,7 +26,6 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
             accumulated_line = ""
             for word in words:
                 test_line = accumulated_line + word + " "
-                    
                 if font.size(test_line)[0] < rect.width:
                     accumulated_line = test_line 
                 else: 
@@ -61,7 +61,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
     return surface
 
 def name():
-
+    Connect((localhost, 55555))
     my_font = pygame.font.Font(None, 30)
 
     my_string = "" 
@@ -103,6 +103,7 @@ def name():
                     my_string = my_string[:-1]
                 elif evt.key == K_RETURN:
                     flag=0
+                    connection.Send({"action": "playermove", "message": my_string})
                     my_string = ""
                 elif evt.key == K_SPACE:
                     if flag==0:

@@ -2,7 +2,6 @@ import pygame
 
 screen = pygame.display.set_mode((640, 640))
 running = 1
-
 while running:
 	event = pygame.event.poll()
 	if event.type == pygame.QUIT:
