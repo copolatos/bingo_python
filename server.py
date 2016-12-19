@@ -1,7 +1,7 @@
 import sys
 from time import sleep, localtime
 from weakref import WeakKeyDictionary
-
+from thread import *
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
 
@@ -10,12 +10,12 @@ rooms = {}#list room
 
 class ClientChannel(Channel):
 	def __init__(self, *args, **kwargs):
-		self.nickname = "anonymous"
+		self.nickname = ""
 		#self.room = ""
 		Channel.__init__(self, *args, **kwargs)
 		
 	def Close(self):
-		self._server.DelPlayer(self)
+	 	self._server.DelPlayer(self)
 
 	def Network_login(self, data):
 		self.nickname = data['nickname']
@@ -26,9 +26,12 @@ class ClientChannel(Channel):
 	
 	def Network_listlobby(self, data):
 		print "list lobby = "
-		print rooms
+		#print rooms
 		print "list room = "
-		print room
+		#print room
+
+	# def Network_joinroom(self):
+	# 	self.Send({"action": "user", "username": })
 
 	def Network_createlobby(self, data):
 		#room.append("room":data["room"])

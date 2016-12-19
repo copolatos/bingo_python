@@ -1,9 +1,47 @@
+import random
 import pygame
 from pygame.locals import *
+from time import sleep
+from sys import stdin, exit
 from PodSixNet.Connection import connection, ConnectionListener
+from thread import *
+
 flag=0
 
 pygame.init()
+
+class Client(ConnectionListener):
+    room = random.randint(1000, 10000)
+
+    def __init__(self, host, port):
+        self.Connect((host, port))
+        connection.Send({"action": "joinroom" })
+        #connection.Send({"action": "login", "nickname": Client.nickname})
+	    #room = random.randint(1000, 10000)
+        #nickname = random.randint(1000, 10000)
+        t = start_new_thread(self.InputLoop, ())
+
+    def Loop(self):
+        connection.Pump()
+        self.Pump()
+
+    def InputLoop(self):
+        connection.Send({"action": "list"})
+
+    #######################################
+    ### Network event/message callbacks ###
+    #######################################
+
+    def Network_connected(self, data):
+        print "Selamat Datang, Selamat Bermain"
+
+    def Network_error(self, data):
+        print 'error:', data['error'][1]
+        connection.Close()
+
+    def Network_disconnected(self, data):
+        print 'Server disconnected'
+        exit()
 
 def render_textrect(string, font, rect, text_color, background_color, justification=0):
     
@@ -58,8 +96,13 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 
     return surface
 
-def name():
-    #Connect(("localhost", 55555))
+def name(nickname, roomnumber):
+    d = Client("localhost", 55555)
+    connection.Send({"action": "listlobby"})
+    print str(roomnumber) + " " + str(nickname)
+    connection.Send({"action": "createlobby", "room": roomnumber, "user": nickname})
+    IMAGE_FILE = "avatar.png"
+    image = pygame.image.load(IMAGE_FILE)
     display = pygame.display.set_mode((480, 480))
     my_font = pygame.font.Font(None, 30)
 
@@ -69,11 +112,11 @@ def name():
     pygame.draw.polygon(display, (255, 255, 255), ((0, 405), (0, 410), (480, 410), (480, 405)), 0)
     pygame.draw.polygon(display, (48,48,48), ((10, 265), (10, 395), (470, 395), (470, 265)), 0)
 
-    pygame.draw.polygon(display, (48,48,48), ((10, 240), (10, 152), (94, 152), (94, 240)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((104, 240), (104, 152), (188, 152), (188, 240)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((198, 240), (198, 152), (282, 152), (282, 240)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((292, 240), (292, 152), (376, 152), (376, 240)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
+    p1_s=pygame.draw.polygon(display, (48,48,48), ((10, 240), (10, 152), (94, 152), (94, 240)), 0)
+    p2_s=pygame.draw.polygon(display, (48,48,48), ((104, 240), (104, 152), (188, 152), (188, 240)), 0)
+    p3_s=pygame.draw.polygon(display, (48,48,48), ((198, 240), (198, 152), (282, 152), (282, 240)), 0)
+    p4_s=pygame.draw.polygon(display, (48,48,48), ((292, 240), (292, 152), (376, 152), (376, 240)), 0)
+    p5_s=pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
 
     tes_surface=pygame.draw.polygon(display, (48,48,48), ((10, 142), (10, 40), (470, 40), (470, 142)), 0)
 
@@ -84,13 +127,18 @@ def name():
     tes_surface.top=20
     tes_surface.left = 160
     #pygame.display.update()
-    
+    display.blit (image, p1_s)
+    display.blit (image, p2_s)
+    display.blit (image, p3_s)
+    display.blit (image, p4_s)
+    display.blit (image, p5_s)
     my_rect = pygame.Rect((40, 45, 460, 45))
     my_rect.left = 10
     my_rect.bottom = 470
     tes=-1
     global flag
     while True:
+        d.Loop()
         for evt in pygame.event.get():
             my_string=my_string.strip('|')
             if evt.type == KEYDOWN:
