@@ -39,6 +39,7 @@ class ClientChannel(Channel):
 		#rooms.append(room)
 		#room = {data["room"]:[data["user"]]}
 		room[data["room"]]=[data["user"]]
+		self._server.kirimroom()
 		#print rooms
 		print room
 		#room.append
@@ -80,7 +81,10 @@ class ChatServer(Server):
 		print "Deleting Player" + str(player.addr)
 		del self.players[player]
 		self.SendPlayers()
-	
+
+	def kirimroom(self):
+		self.SendToAll({"action": "listroom", "room": room[]})
+
 	def SendPlayers(self):
 		self.SendToAll({"action": "players", "players": [p.nickname for p in self.players]})
 
