@@ -18,12 +18,9 @@ screen = pygame.display.set_mode((480, 480), 0, 32)
 nickname = random.randint(1000, 10000)
 room = random.randint(1000, 10000)
 class Client(ConnectionListener):
-    nickname = random.randint(1000, 10000)
-
     def __init__(self, host, port):
         self.Connect((host, port))
-        connection.Send({"action": "login", "nickname": Client.nickname})
-	    #room = random.randint(1000, 10000)
+	#room = random.randint(1000, 10000)
         #nickname = random.randint(1000, 10000)
         connection.Send({"action": "login", "nickname": nickname})
         t = start_new_thread(self.InputLoop, ())
@@ -34,10 +31,9 @@ class Client(ConnectionListener):
 
     def InputLoop(self):
         connection.Send({"action": "list"})
-
 	connection.Send({"action": "listlobby"})
-	connection.Send({"action": "createlobby", "room": room, "user": nickname})
-	#connection.Send({"action": "joinlobby", "room": room, "user": nickname})
+	#connection.Send({"action": "createlobby", "room": room, "user": nickname})
+	connection.Send({"action": "joinlobby", "room": 1335, "user": nickname})
         while 1:
             connection.Send({"action": "message", "message": stdin.readline().rstrip("\n")})
 
@@ -46,8 +42,7 @@ class Client(ConnectionListener):
     #######################################
 
     def Network_playermove(self, data):
-        tes = state.index(int(data['move']))
-        state[tes] = 0
+        print data['message']
 
     def Network_connected(self, data):
         print "Selamat Datang, Selamat Bermain"
@@ -114,7 +109,6 @@ class Board():
             self.items.append(menu_item)
             i += 1
     def run(self):
-        flag_bingo = 0
         mainloop = True
         c = Client("localhost", 55555)
         score = ""
@@ -131,32 +125,26 @@ class Board():
             font = pygame.font.Font(None, 96)
 
             for item in self.items:
-                global bingo
                 bingo = 0
-                for i in range(0, 5):
-                    if state[0 + i] == 0 and state[5 + i] == 0 and state[10 + i] == 0 and state[15 + i] == 0 and state[
-                                20 + i] == 0:
-                        bingo += 1
-                    if state[i * 5 + 0] == 0 and state[i * 5 + 1] == 0 and state[i * 5 + 2] == 0 and state[
-                                        i * 5 + 3] == 0 and state[i * 5 + 4] == 0:
-                        bingo += 1
-                if state[0] == 0 and state[6] == 0 and state[12] == 0 and state[18] == 0 and state[24] == 0:
-                    bingo += 1
-                if state[4] == 0 and state[8] == 0 and state[12] == 0 and state[16] == 0 and state[20] == 0:
-                    bingo += 1
-                if item.handle == True or state[item.pos_x / 96 + (item.pos_y / 96) * 5]==0:
+                if item.handle == True:
                     pygame.draw.polygon(screen, (255, 255, 255), ((item.pos_x/96*96+1, item.pos_y/96*96), (item.pos_x/96*96, item.pos_y/96*96 + 1), (item.pos_x/96*96 + 94, item.pos_y/96*96 + 95), (item.pos_x/96*96 + 95, item.pos_y/96*96 + 94)), 0)
                     pygame.draw.polygon(screen, (255, 255, 255), ((item.pos_x/96*96+94, item.pos_y/96*96), (item.pos_x/96*96+96, item.pos_y/96*96+1),(item.pos_x / 96 * 96 + 1, item.pos_y / 96 * 96 + 96),(item.pos_x/96*96, item.pos_y/96*96+95)), 0)
                 if item.is_mouse_selection(pygame.mouse.get_pos()):
                     if pygame.mouse.get_pressed()[0] and item.handle == False:
                         connection.Send({"action": "playermove", "move": item.text})
                         item.handle=True
-                        #state[item.pos_x / 96 + (item.pos_y / 96) * 5] = 0
-
-                if bingo >= 5 and flag_bingo == 0:
+                        state[item.pos_x / 96 + (item.pos_y / 96) * 5] = 0
+                        for i in range(0, 5):
+                            if state[0 + i] == 0 and state[5 + i] == 0 and state[10 + i] == 0 and state[15 + i] == 0 and state[20 + i] == 0:
+                                bingo += 1
+                            if state[i * 5 + 0] == 0 and state[i * 5 + 1] == 0 and state[i * 5 + 2] == 0 and state[i * 5 + 3] == 0 and state[i * 5 + 4] == 0:
+                                bingo += 1
+                        if state[0] == 0 and state[6] == 0 and state[12] == 0 and state[18] == 0 and state[24] == 0:
+                            bingo += 1
+                        if state[4] == 0 and state[8] == 0 and state[12] == 0 and state[16] == 0 and state[20] == 0:
+                            bingo += 1
+                if bingo >= 5:
                     score = "B I N G O !"
-                    flag_bingo = 1
-                    #print Client.nickname
                 elif bingo == 4:
                     score = "B I N G "
                 elif bingo == 3:
