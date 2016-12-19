@@ -24,7 +24,7 @@ class ClientChannel(Channel):
 	def Network_playermove(self,data):
 		#self.move = data["message"]
 		print data["move"]
-		self._server.SendToAll({"action": "playermove", "message": data["message"]})
+		self._server.SendToAll({"action": "playermove", "move": data["move"]})
 
 class ChatServer(Server):
 	channelClass = ClientChannel

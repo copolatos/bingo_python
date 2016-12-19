@@ -1,5 +1,6 @@
 import pygame
-import BOARDCLIENT
+#import BOARDCLIENT
+import lobby
 
 pygame.init()
 
@@ -81,7 +82,8 @@ class GameMenu():
                     item.set_font_color((255, 0, 0))
                     item.set_italic(True)
                     if item.check_index() == 1 and pygame.mouse.get_pressed()[0]:
-                        BOARDCLIENT.main()
+                        #BOARDCLIENT.main()
+                        lobby.main()
                         pygame.display.set_mode((320, 240), 0, 32)
                     elif item.check_index() == 2 and pygame.mouse.get_pressed()[0]:
                         exit()

@@ -35,8 +35,6 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
         else: 
             final_lines.append(requested_line) 
 
-    
-
     surface = pygame.Surface(rect.size) 
     surface.fill(background_color) 
 
@@ -61,7 +59,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
     return surface
 
 def name():
-    Connect((localhost, 55555))
+    #Connect(("localhost", 55555))
     my_font = pygame.font.Font(None, 30)
 
     my_string = "" 
@@ -103,7 +101,7 @@ def name():
                     my_string = my_string[:-1]
                 elif evt.key == K_RETURN:
                     flag=0
-                    connection.Send({"action": "playermove", "message": my_string})
+                    #connection.Send({"action": "playermove", "message": my_string})
                     my_string = ""
                 elif evt.key == K_SPACE:
                     if flag==0:
