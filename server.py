@@ -6,7 +6,7 @@ from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
 
 room = {}#room_name:username
-rooms = {}#list room
+rooms = []#list room
 
 class ClientChannel(Channel):
 	def __init__(self, *args, **kwargs):
@@ -19,6 +19,7 @@ class ClientChannel(Channel):
 
 	def Network_login(self, data):
 		self.nickname = data['nickname']
+		self._server.kirimroom()
 		#self.Send({"action": "responselogin", "status": 1})
 
 	def Network_list(self, data):
@@ -34,11 +35,8 @@ class ClientChannel(Channel):
 	# 	self.Send({"action": "user", "username": })
 
 	def Network_createlobby(self, data):
-		#room.append("room":data["room"])
-		#room.append("user":data["user"])
-		#rooms.append(room)
-		#room = {data["room"]:[data["user"]]}
 		room[data["room"]]=[data["user"]]
+		rooms.append(data["room"])
 		self._server.kirimroom()
 		#print rooms
 		print room
@@ -47,12 +45,32 @@ class ClientChannel(Channel):
 	def Network_joinlobby(self, data):
 		room[data["room"]].append(data["user"])
 		#print "orang di room"
+		self._server.SendToAll({"action": "users", "users": room[data["room"]]})
 		print room
 
+	def Network_delroom(self, data):
+		room.pop(data["roomname"], None)
+		self._server.kirimroom()
+
 	def Network_playermove(self,data):
-		#self.move = data["message"]
-		print data["move"]
-		self._server.SendToAll({"action": "playermove", "move": data["move"]})
+		print data['move']
+		print data['nickname']
+		playertotal = len(room[data['room']])
+		if (room[data['room']]).index(data['nickname']) + 1 >= playertotal:
+			print room[data['room']][0]
+			nextturn = room[data['room']][0]
+			self._server.SendToAll({"action": "playermove", "move": data["move"], "room": data['room'], "nickname": nextturn})
+		else:
+			print room[data['room']][((room[data['room']]).index(data['nickname'])) + 1]
+			nextturn = room[data['room']][((room[data['room']]).index(data['nickname'])) + 1]
+			self._server.SendToAll({"action": "playermove", "move": data["move"], "room": data['room'], "nickname": nextturn})
+
+	def Network_winner(self,data):
+		self._server.SendToAll({"action": "winner", "winflag": 1})
+
+	def Network_play(self,data):
+		nextturn = room[data['room']][0]
+		self._server.SendToAll({"action": "firstturn", "nickname": nextturn})
 
 class ChatServer(Server):
 	channelClass = ClientChannel
@@ -83,7 +101,7 @@ class ChatServer(Server):
 		self.SendPlayers()
 
 	def kirimroom(self):
-		self.SendToAll({"action": "listroom", "room": room[]})
+		self.SendToAll({"action": "listroom", "rooms": room})
 
 	def SendPlayers(self):
 		self.SendToAll({"action": "players", "players": [p.nickname for p in self.players]})
