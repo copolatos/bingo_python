@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import room
 
 pygame.init()
 
@@ -32,8 +33,13 @@ def main():
         pygame.draw.rect(gameDisplay, (40,40,40), [10,10,580,300])
         cur = pygame.mouse.get_pos()
         if cur[0] > 450 and cur[0] < 565 and cur[1] > 350 and cur[1] < 370:
+            if pygame.mouse.get_pressed()[0]:
+                room.name()
+                pygame.display.set_mode((600, 400))
+            font.set_italic(True)
             message_to_screen("Create Room", red)
         else:
+            font.set_italic(False)
             message_to_screen("Create Room", white)
         pygame.display.update()
 

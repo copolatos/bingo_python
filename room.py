@@ -60,6 +60,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 
 def name():
     #Connect(("localhost", 55555))
+    display = pygame.display.set_mode((480, 480))
     my_font = pygame.font.Font(None, 30)
 
     my_string = "" 
@@ -129,8 +130,8 @@ def name():
             pygame.display.update()
         
 
-if __name__ == '__main__':
-    display = pygame.display.set_mode((480, 480))
-    name()
+# if __name__ == '__main__':
+#     display = pygame.display.set_mode((480, 480))
+#     name()
 
     
