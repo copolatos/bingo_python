@@ -1,9 +1,7 @@
 import pygame
-import time
 import client
 
 pygame.init()
-
 
 class MenuItem(pygame.font.Font):
     def __init__(self, text, font=None, font_size=30,
