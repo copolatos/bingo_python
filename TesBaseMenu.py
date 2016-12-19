@@ -1,5 +1,4 @@
 import pygame
-#import BOARDCLIENT
 import lobby
 
 pygame.init()
