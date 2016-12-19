@@ -15,11 +15,13 @@ pygame.init()
 
 screen = pygame.display.set_mode((480, 480), 0, 32)
 
-
+nickname = random.randint(1000, 10000)
+room = random.randint(1000, 10000)
 class Client(ConnectionListener):
     def __init__(self, host, port):
         self.Connect((host, port))
-        nickname = random.randint(1000, 10000)
+	#room = random.randint(1000, 10000)
+        #nickname = random.randint(1000, 10000)
         connection.Send({"action": "login", "nickname": nickname})
         t = start_new_thread(self.InputLoop, ())
 
@@ -29,6 +31,9 @@ class Client(ConnectionListener):
 
     def InputLoop(self):
         connection.Send({"action": "list"})
+	connection.Send({"action": "listlobby"})
+	connection.Send({"action": "createlobby", "room": room, "user": nickname})
+	#connection.Send({"action": "joinlobby", "room": room, "user": nickname})
         while 1:
             connection.Send({"action": "message", "message": stdin.readline().rstrip("\n")})
 

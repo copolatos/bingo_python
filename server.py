@@ -5,10 +5,13 @@ from weakref import WeakKeyDictionary
 from PodSixNet.Server import Server
 from PodSixNet.Channel import Channel
 
+room = {}#room_name:username
+rooms = {}#list room
+
 class ClientChannel(Channel):
 	def __init__(self, *args, **kwargs):
 		self.nickname = "anonymous"
-		self.room = ""
+		#self.room = ""
 		Channel.__init__(self, *args, **kwargs)
 		
 	def Close(self):
@@ -21,6 +24,27 @@ class ClientChannel(Channel):
 	def Network_list(self, data):
 		self._server.ListPlayers()
 	
+	def Network_listlobby(self, data):
+		print "list lobby = "
+		print rooms
+		print "list room = "
+		print room
+
+	def Network_createlobby(self, data):
+		#room.append("room":data["room"])
+		#room.append("user":data["user"])
+		#rooms.append(room)
+		#room = {data["room"]:[data["user"]]}
+		room[data["room"]]=[data["user"]]
+		#print rooms
+		print room
+		#room.append
+	
+	def Network_joinlobby(self, data):
+		room[data["room"]].append(data["user"])
+		#print "orang di room"
+		print room
+
 	def Network_playermove(self,data):
 		#self.move = data["message"]
 		print data["move"]
