@@ -60,6 +60,8 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 
 def name():
     #Connect(("localhost", 55555))
+    IMAGE_FILE = "avatar.png"
+    image = pygame.image.load(IMAGE_FILE)
     display = pygame.display.set_mode((480, 480))
     my_font = pygame.font.Font(None, 30)
 
@@ -69,11 +71,11 @@ def name():
     pygame.draw.polygon(display, (255, 255, 255), ((0, 405), (0, 410), (480, 410), (480, 405)), 0)
     pygame.draw.polygon(display, (48,48,48), ((10, 265), (10, 395), (470, 395), (470, 265)), 0)
 
-    pygame.draw.polygon(display, (48,48,48), ((10, 240), (10, 152), (94, 152), (94, 240)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((104, 240), (104, 152), (188, 152), (188, 240)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((198, 240), (198, 152), (282, 152), (282, 240)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((292, 240), (292, 152), (376, 152), (376, 240)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
+    p1_s=pygame.draw.polygon(display, (48,48,48), ((10, 240), (10, 152), (94, 152), (94, 240)), 0)
+    p2_s=pygame.draw.polygon(display, (48,48,48), ((104, 240), (104, 152), (188, 152), (188, 240)), 0)
+    p3_s=pygame.draw.polygon(display, (48,48,48), ((198, 240), (198, 152), (282, 152), (282, 240)), 0)
+    p4_s=pygame.draw.polygon(display, (48,48,48), ((292, 240), (292, 152), (376, 152), (376, 240)), 0)
+    p5_s=pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
 
     tes_surface=pygame.draw.polygon(display, (48,48,48), ((10, 142), (10, 40), (470, 40), (470, 142)), 0)
 
@@ -84,7 +86,11 @@ def name():
     tes_surface.top=20
     tes_surface.left = 160
     #pygame.display.update()
-    
+    display.blit (image, p1_s)
+    display.blit (image, p2_s)
+    display.blit (image, p3_s)
+    display.blit (image, p4_s)
+    display.blit (image, p5_s)
     my_rect = pygame.Rect((40, 45, 460, 45))
     my_rect.left = 10
     my_rect.bottom = 470
