@@ -11,43 +11,39 @@ from PodSixNet.Connection import connection, ConnectionListener
 # Don't ever do this - it's slow and ugly. (I'm doing it for simplicity's sake)
 from thread import *
 
+winserver = 0
+
 pygame.init()
 
 screen = pygame.display.set_mode((480, 480), 0, 32)
 
-nickname = random.randint(1000, 10000)
-room = random.randint(1000, 10000)
 class Client(ConnectionListener):
-    nickname = random.randint(1000, 10000)
-
+    nextturn = 0
     def __init__(self, host, port):
         self.Connect((host, port))
-        connection.Send({"action": "login", "nickname": Client.nickname})
-	    #room = random.randint(1000, 10000)
-        #nickname = random.randint(1000, 10000)
-        connection.Send({"action": "login", "nickname": nickname})
-        t = start_new_thread(self.InputLoop, ())
+        connection.Send({"action": "play", "room": room_number})
 
     def Loop(self):
         connection.Pump()
         self.Pump()
-
-    def InputLoop(self):
-        connection.Send({"action": "list"})
-
-	connection.Send({"action": "listlobby"})
-	connection.Send({"action": "createlobby", "room": room, "user": nickname})
-	#connection.Send({"action": "joinlobby", "room": room, "user": nickname})
-        while 1:
-            connection.Send({"action": "message", "message": stdin.readline().rstrip("\n")})
 
     #######################################
     ### Network event/message callbacks ###
     #######################################
 
     def Network_playermove(self, data):
-        tes = state.index(int(data['move']))
-        state[tes] = 0
+        tes = 0
+        if data['room'] == room_number:
+            tes = state.index(int(data['move']))
+            state[tes] = 0
+        Client.nextturn = data['nickname']
+
+    def Network_firstturn(self, data):
+        Client.nextturn = data['nickname']
+
+    def Network_winner(self, data):
+        global winserver
+        winserver = data['winflag']
 
     def Network_connected(self, data):
         print "Selamat Datang, Selamat Bermain"
@@ -122,13 +118,38 @@ class Board():
             c.Loop()
             # self.clock.tick(60)
 
+            font = pygame.font.Font(None, 96)
+
+            if winserver == flag_bingo and winserver == 1:
+                IMAGE_FILE = "win.png"
+                image = pygame.image.load(IMAGE_FILE)
+                self.screen.fill(self.bg_color)
+                self.screen.blit(font.render("W I N N E R  ! !", True, (255, 255, 255)), (15, 150))
+                self.screen.blit(image,(90, 250))
+                pygame.display.flip()
+                while True:
+                    for evt in pygame.event.get():
+                        if evt.type == KEYDOWN:
+                            return
+
+            elif winserver != flag_bingo and winserver == 1:
+                IMAGE_FILE = "lose.png"
+                image = pygame.image.load(IMAGE_FILE)
+                self.screen.fill(self.bg_color)
+                self.screen.blit(font.render("L O S E R  ! !", True, (255, 255, 255)), (40, 150))
+                self.screen.blit(image, (90, 250))
+                pygame.display.flip()
+                while True:
+                    for evt in pygame.event.get():
+                        if evt.type == KEYDOWN:
+                            return
+
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     mainloop = False
 
             self.screen.fill(self.bg_color)
-
-            font = pygame.font.Font(None, 96)
 
             for item in self.items:
                 global bingo
@@ -148,15 +169,15 @@ class Board():
                     pygame.draw.polygon(screen, (255, 255, 255), ((item.pos_x/96*96+1, item.pos_y/96*96), (item.pos_x/96*96, item.pos_y/96*96 + 1), (item.pos_x/96*96 + 94, item.pos_y/96*96 + 95), (item.pos_x/96*96 + 95, item.pos_y/96*96 + 94)), 0)
                     pygame.draw.polygon(screen, (255, 255, 255), ((item.pos_x/96*96+94, item.pos_y/96*96), (item.pos_x/96*96+96, item.pos_y/96*96+1),(item.pos_x / 96 * 96 + 1, item.pos_y / 96 * 96 + 96),(item.pos_x/96*96, item.pos_y/96*96+95)), 0)
                 if item.is_mouse_selection(pygame.mouse.get_pos()):
-                    if pygame.mouse.get_pressed()[0] and item.handle == False:
-                        connection.Send({"action": "playermove", "move": item.text})
+                    if pygame.mouse.get_pressed()[0] and item.handle == False and Client.nextturn == nick_name:
+                        connection.Send({"action": "playermove", "move": item.text, "room": room_number, "nickname": nick_name})
                         item.handle=True
                         #state[item.pos_x / 96 + (item.pos_y / 96) * 5] = 0
 
                 if bingo >= 5 and flag_bingo == 0:
                     score = "B I N G O !"
                     flag_bingo = 1
-                    #print Client.nickname
+                    connection.Send({"action": "winner", "winflag": flag_bingo})
                 elif bingo == 4:
                     score = "B I N G "
                 elif bingo == 3:
@@ -168,26 +189,26 @@ class Board():
                 self.screen.blit(font.render(score, True, (255, 255, 255)), (25, 520))
                 self.screen.blit(item.label, item.position)
 
-            for i in xrange(0, 5):
-                pygame.draw.polygon(screen, (255, 255, 255), ((95 + 96 * i, 0), (97 + 96 * i, 0), (97 + 96 * i, 480), (95 + 96 * i, 480)), 0)
-            for i in xrange(0, 5):
-                pygame.draw.polygon(screen, (255, 255, 255), ((0, 95 + 96 * i), (0, 97 + 96 * i), (480, 97 + 96 * i), (480, 95 + 96 * i)), 0)
+            for x in xrange(0, 5):
+                pygame.draw.polygon(screen, (255, 255, 255), ((95 + 96 * x, 0), (97 + 96 * x, 0), (97 + 96 * x, 480), (95 + 96 * x, 480)), 0)
+            for x in xrange(0, 5):
+                pygame.draw.polygon(screen, (255, 255, 255), ((0, 95 + 96 * x), (0, 97 + 96 * x), (480, 97 + 96 * x), (480, 95 + 96 * x)), 0)
             pygame.display.flip()
 
 
 def board_numbers():
     number = ""
     font = pygame.font.Font(None, 96)
-    # board = [0, 0, 0, 0, 0,
-    #          0, 0, 0, 0, 0,
-    #          0, 0, 0, 0, 0,
-    #          0, 0, 0, 0, 0,
-    #          0, 0, 0, 0, 0]
-    board = [1, 2, 3, 4, 5,
-             16, 17, 18, 19, 6,
-             15, 24, 25, 20, 7,
-             14, 23, 22, 21, 8,
-             13, 12, 11, 10, 9]
+    board = [0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0]
+    # board = [1, 2, 3, 4, 5,
+    #          16, 17, 18, 19, 6,
+    #          15, 24, 25, 20, 7,
+    #          14, 23, 22, 21, 8,
+    #          13, 12, 11, 10, 9]
     global state
     state = board
     i = 0
@@ -249,7 +270,7 @@ def board_numbers():
         while m < len(board):
             if board[m] != 0:
                 block = font.render(str(board[m]), True, (255, 255, 255))
-                screen.blit(block, (k * screen.get_rect().width / 5, l * screen.get_rect().height / 5))
+                screen.blit(block, (k * 480 / 5, l * 480 / 5))
             if k == 4:
                 k = 0
                 l += 1
@@ -257,16 +278,22 @@ def board_numbers():
                 k+=1
             m+=1
         block = font.render(number, True, (255, 255, 255))
-        screen.blit(block, (i * screen.get_rect().width/5, j*screen.get_rect().height/5))
-        for i in xrange(0, 5):
-            pygame.draw.polygon(screen, (255, 255, 255),((95 + 96 * i, 0), (97 + 96 * i, 0), (97 + 96 * i, 480), (95 + 96 * i, 480)), 0)
-        for i in xrange(0, 5):
-            pygame.draw.polygon(screen, (255, 255, 255),((0, 95 + 96 * i), (0, 97 + 96 * i), (480, 97 + 96 * i), (480, 95 + 96 * i)), 0)
+        screen.blit(block, (i * 480/5, j*480/5))
+        for x in xrange(0, 5):
+            pygame.draw.polygon(screen, (255, 255, 255),((95 + 96 * x, 0), (97 + 96 * x, 0), (97 + 96 * x, 480), (95 + 96 * x, 480)), 0)
+        for x in xrange(0, 5):
+            pygame.draw.polygon(screen, (255, 255, 255),((0, 95 + 96 * x), (0, 97 + 96 * x), (480, 97 + 96 * x), (480, 95 + 96 * x)), 0)
         pygame.display.flip()
     gm = Board(screen, board)
     gm.run()
 
-def main():
+def main(nickname, roomnumber):
+    global nick_name
+    global room_number
+    nick_name = nickname
+    room_number = roomnumber
+    print room_number
+    print nick_name
     pygame.display.set_caption('BINGO BOARD')
     pygame.display.set_mode((480, 640), 0, 32)
     board_numbers()

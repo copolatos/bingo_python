@@ -5,17 +5,23 @@ from time import sleep
 from sys import stdin, exit
 from PodSixNet.Connection import connection, ConnectionListener
 from thread import *
+import BOARDCLIENT
 
 flag=0
 
 pygame.init()
+<<<<<<< HEAD
 room = {}
+=======
+
+
+>>>>>>> 6271fe6af866ecd38aa4f669c04d96d1ecc3ec3e
 class Client(ConnectionListener):
-    room = random.randint(1000, 10000)
+    listplayer = []
 
     def __init__(self, host, port):
         self.Connect((host, port))
-        connection.Send({"action": "joinroom" })
+        # connection.Send({"action": "joinroom" })
         #connection.Send({"action": "login", "nickname": Client.nickname})
 	    #room = random.randint(1000, 10000)
         #nickname = random.randint(1000, 10000)
@@ -32,8 +38,13 @@ class Client(ConnectionListener):
     ### Network event/message callbacks ###
     #######################################
 
+<<<<<<< HEAD
     def Network_listroom(self, data):
 	print data["room"]
+=======
+    def Network_users(self, data):
+        print data["users"]
+>>>>>>> 6271fe6af866ecd38aa4f669c04d96d1ecc3ec3e
 
     def Network_connected(self, data):
         print "Selamat Datang, Selamat Bermain"
@@ -99,11 +110,18 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 
     return surface
 
-def name(nickname, roomnumber):
+def name(nickname, roomnumber, jorc):
     d = Client("localhost", 55555)
     connection.Send({"action": "listlobby"})
     #print str(roomnumber) + " " + str(nickname)
+<<<<<<< HEAD
     connection.Send({"action": "createlobby", "room": roomnumber, "user": nickname})
+=======
+    if jorc == 0:
+        connection.Send({"action": "createlobby", "room": roomnumber, "user": nickname})
+    else:
+        connection.Send({"action": "joinlobby", "room": roomnumber, "user": nickname})
+>>>>>>> 6271fe6af866ecd38aa4f669c04d96d1ecc3ec3e
     IMAGE_FILE = "avatar.png"
     image = pygame.image.load(IMAGE_FILE)
     display = pygame.display.set_mode((480, 480))
@@ -163,6 +181,9 @@ def name(nickname, roomnumber):
         if screen_text_r.collidepoint(pygame.mouse.get_pos()):
             screen_text = rd_font.render("READY",True,(0,0,0))
             display.blit(screen_text,tes_surface.midleft)
+            if pygame.mouse.get_pressed()[0]:
+                BOARDCLIENT.main(nickname, roomnumber)
+                return
         else:
             screen_text = rd_font.render("READY",True,(255,255,255))
             display.blit(screen_text,tes_surface.midleft)
