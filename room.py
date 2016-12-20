@@ -11,7 +11,6 @@ flag=0
 
 pygame.init()
 
-
 class Client(ConnectionListener):
     listplayer = []
 
@@ -33,6 +32,9 @@ class Client(ConnectionListener):
     #######################################
     ### Network event/message callbacks ###
     #######################################
+
+    def Network_listroom(self, data):
+	print data["room"]
 
     def Network_users(self, data):
         print data["users"]
@@ -105,10 +107,14 @@ def name(nickname, roomnumber, jorc):
     d = Client("localhost", 55555)
     connection.Send({"action": "listlobby"})
     #print str(roomnumber) + " " + str(nickname)
+
+    connection.Send({"action": "createlobby", "room": roomnumber, "user": nickname})
+
     if jorc == 0:
         connection.Send({"action": "createlobby", "room": roomnumber, "user": nickname})
     else:
         connection.Send({"action": "joinlobby", "room": roomnumber, "user": nickname})
+
     IMAGE_FILE = "avatar.png"
     image = pygame.image.load(IMAGE_FILE)
     display = pygame.display.set_mode((480, 480))
