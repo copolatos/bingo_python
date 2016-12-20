@@ -8,7 +8,7 @@ from thread import *
 import BOARDCLIENT
 
 flag=0
-
+jumlah_orang = 0
 pygame.init()
 
 
@@ -35,6 +35,8 @@ class Client(ConnectionListener):
     #######################################
 
     def Network_users(self, data):
+	global jumlah_orang
+	jumlah_orang = data["users"]
         print data["users"]
 
     def Network_connected(self, data):
@@ -135,17 +137,38 @@ def name(nickname, roomnumber, jorc):
     tes_surface.top=20
     tes_surface.left = 160
     #pygame.display.update()
-    display.blit (image, p1_s)
-    display.blit (image, p2_s)
-    display.blit (image, p3_s)
-    display.blit (image, p4_s)
-    display.blit (image, p5_s)
+    #display.blit (image, p1_s)
+    #display.blit (image, p2_s)
+    #display.blit (image, p3_s)
+    #display.blit (image, p4_s)
+    #display.blit (image, p5_s)
     my_rect = pygame.Rect((40, 45, 460, 45))
     my_rect.left = 10
     my_rect.bottom = 470
     tes=-1
     global flag
+    global jumlah_orang
     while True:
+	if(jumlah_orang >= 1):
+	    display.blit (image, p1_s)
+	    p2_s=pygame.draw.polygon(display, (48,48,48), ((104, 240), (104, 152), (188, 152), (188, 240)), 0)
+	    p3_s=pygame.draw.polygon(display, (48,48,48), ((198, 240), (198, 152), (282, 152), (282, 240)), 0)
+	    p4_s=pygame.draw.polygon(display, (48,48,48), ((292, 240), (292, 152), (376, 152), (376, 240)), 0)
+	    p5_s=pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
+	if(jumlah_orang >= 2):
+	    display.blit (image, p2_s)
+            p3_s=pygame.draw.polygon(display, (48,48,48), ((198, 240), (198, 152), (282, 152), (282, 240)), 0)
+            p4_s=pygame.draw.polygon(display, (48,48,48), ((292, 240), (292, 152), (376, 152), (376, 240)), 0)
+            p5_s=pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
+	if(jumlah_orang >= 3):
+            display.blit (image, p3_s)
+            p4_s=pygame.draw.polygon(display, (48,48,48), ((292, 240), (292, 152), (376, 152), (376, 240)), 0)
+            p5_s=pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
+	if(jumlah_orang >= 4):
+            display.blit (image, p4_s)
+            p5_s=pygame.draw.polygon(display, (48,48,48), ((386, 240), (386, 152), (470, 152), (470, 240)), 0)
+	if(jumlah_orang >= 5):
+            display.blit (image, p5_s)
         d.Loop()
         for evt in pygame.event.get():
             my_string=my_string.strip('|')
@@ -164,6 +187,7 @@ def name(nickname, roomnumber, jorc):
                     if flag==0:
                         my_string += " "
                 elif evt.key == K_ESCAPE:
+		    connection.Send({"action": "deluserroom", "room": roomnumber, "user": nickname})
                     return
         if screen_text_r.collidepoint(pygame.mouse.get_pos()):
             screen_text = rd_font.render("READY",True,(0,0,0))
@@ -188,9 +212,3 @@ def name(nickname, roomnumber, jorc):
             display.blit(rendered_text, my_rect.topleft)
             pygame.display.update()
         
-
-# if __name__ == '__main__':
-#     display = pygame.display.set_mode((480, 480))
-#     name()
-
-    

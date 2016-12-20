@@ -38,6 +38,7 @@ class ClientChannel(Channel):
 		room[data["room"]]=[data["user"]]
 		rooms.append(data["room"])
 		self._server.kirimroom()
+		self._server.SendToAll({"action": "users", "users": len(room[data["room"]])})
 		#print rooms
 		print room
 		#room.append
@@ -45,12 +46,19 @@ class ClientChannel(Channel):
 	def Network_joinlobby(self, data):
 		room[data["room"]].append(data["user"])
 		#print "orang di room"
-		self._server.SendToAll({"action": "users", "users": room[data["room"]]})
+		self._server.SendToAll({"action": "users", "users": len(room[data["room"]])})
 		print room
 
 	def Network_delroom(self, data):
 		room.pop(data["roomname"], None)
 		self._server.kirimroom()
+
+	def Network_deluserroom(self, data):
+		index_user = (room[data['room']]).index(data["user"])
+		(room[data['room']]).pop(index_user)
+                #room.pop(data["roomname"], None)
+                #self._server.kirimroom()
+		self._server.SendToAll({"action": "users", "users": len(room[data["room"]])})
 
 	def Network_playermove(self,data):
 		print data['move']
