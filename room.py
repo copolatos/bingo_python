@@ -9,7 +9,7 @@ from thread import *
 flag=0
 
 pygame.init()
-
+room = {}
 class Client(ConnectionListener):
     room = random.randint(1000, 10000)
 
@@ -31,6 +31,9 @@ class Client(ConnectionListener):
     #######################################
     ### Network event/message callbacks ###
     #######################################
+
+    def Network_listroom(self, data):
+	print data["room"]
 
     def Network_connected(self, data):
         print "Selamat Datang, Selamat Bermain"
@@ -99,7 +102,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 def name(nickname, roomnumber):
     d = Client("localhost", 55555)
     connection.Send({"action": "listlobby"})
-    print str(roomnumber) + " " + str(nickname)
+    #print str(roomnumber) + " " + str(nickname)
     connection.Send({"action": "createlobby", "room": roomnumber, "user": nickname})
     IMAGE_FILE = "avatar.png"
     image = pygame.image.load(IMAGE_FILE)

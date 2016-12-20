@@ -52,7 +52,7 @@ class Client(ConnectionListener):
 		print 'Server disconnected'
 		exit()
 
-c = Client("localhost", 55555)
+c = Client("192.168.1.17", 55555)
 while 1:
 	c.Loop()
 	#sleep(0.001)
