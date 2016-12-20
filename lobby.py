@@ -65,7 +65,7 @@ def message_to_screen(msg,color):
 def main():
     pygame.display.set_mode((600, 400))
     pygame.display.set_caption('Lobby')
-    c = Client("localhost", 55555)
+    c = Client("192.168.1.25", 55555)
     joinlobby = 0
     while not gameExit:
         c.Loop()

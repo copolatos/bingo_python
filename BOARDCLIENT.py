@@ -112,7 +112,7 @@ class Board():
     def run(self):
         flag_bingo = 0
         mainloop = True
-        c = Client("localhost", 55555)
+        c = Client("192.168.1.25", 55555)
         score = ""
         while mainloop:
             c.Loop()

@@ -10,7 +10,10 @@ import BOARDCLIENT
 flag=0
 jumlah_orang = 0
 pygame.init()
-
+pesan = ""
+user = ''
+room = 0
+flag_chat = -1
 
 class Client(ConnectionListener):
     listplayer = []
@@ -41,6 +44,16 @@ class Client(ConnectionListener):
 
     def Network_connected(self, data):
         print "Selamat Datang, Selamat Bermain"
+
+    def Network_chatroom(self, data):
+	global pesan
+	global user
+	global room
+	global flag_chat
+	pesan = data["message"]
+	user = str(data["user"])
+	room = data["room"]
+	flag_chat += 1
 
     def Network_error(self, data):
         print 'error:', data['error'][1]
@@ -104,7 +117,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
     return surface
 
 def name(nickname, roomnumber, jorc):
-    d = Client("localhost", 55555)
+    d = Client("192.168.1.25", 55555)
     connection.Send({"action": "listlobby"})
     #print str(roomnumber) + " " + str(nickname)
     if jorc == 0:
@@ -120,7 +133,7 @@ def name(nickname, roomnumber, jorc):
 
     pygame.draw.polygon(display, (255, 255, 255), ((0, 250), (0, 255), (480, 255), (480, 250)), 0)
     pygame.draw.polygon(display, (255, 255, 255), ((0, 405), (0, 410), (480, 410), (480, 405)), 0)
-    pygame.draw.polygon(display, (48,48,48), ((10, 265), (10, 395), (470, 395), (470, 265)), 0)
+    tampil = pygame.draw.polygon(display, (48,48,48), ((10, 265), (10, 395), (470, 395), (470, 265)), 0)
 
     p1_s=pygame.draw.polygon(display, (48,48,48), ((10, 240), (10, 152), (94, 152), (94, 240)), 0)
     p2_s=pygame.draw.polygon(display, (48,48,48), ((104, 240), (104, 152), (188, 152), (188, 240)), 0)
@@ -131,6 +144,7 @@ def name(nickname, roomnumber, jorc):
     tes_surface=pygame.draw.polygon(display, (48,48,48), ((10, 142), (10, 40), (470, 40), (470, 142)), 0)
 
     rd_font = pygame.font.Font(None, 70)
+    chat_font = pygame.font.Font(None, 20)
     screen_text = rd_font.render("READY",True,(255,255,255))
     screen_text_r=screen_text.get_rect()
     screen_text_r.x,screen_text_r.y=160,70
@@ -148,6 +162,10 @@ def name(nickname, roomnumber, jorc):
     tes=-1
     global flag
     global jumlah_orang
+    global flag_chat
+    global pesan
+    global user
+    global room
     while True:
 	if(jumlah_orang >= 1):
 	    display.blit (image, p1_s)
@@ -170,6 +188,19 @@ def name(nickname, roomnumber, jorc):
 	if(jumlah_orang >= 5):
             display.blit (image, p5_s)
         d.Loop()
+	pygame.display.update()
+	#for ikan in range(flag_chat):
+	    #chat_text = rd_font.render((str(pesan), True, (255, 255, 255))
+	if(flag_chat!=-1):
+	    if(flag_chat % 7 != 0):
+		chat_text = chat_font.render((user+" : "+pesan),True,(255,255,255))
+        	display.blit(chat_text,(tampil.x,tampil.y+flag_chat*18))
+	    else:
+		tampil = pygame.draw.polygon(display, (48,48,48), ((10, 265), (10, 395), (470, 395), (470, 265)), 0)
+		flag_chat = 0
+		chat_text = chat_font.render((user+" : "+pesan),True,(255,255,255))
+                display.blit(chat_text,(tampil.x,tampil.y+flag_chat*18))
+
         for evt in pygame.event.get():
             my_string=my_string.strip('|')
             if evt.type == KEYDOWN:
@@ -181,7 +212,7 @@ def name(nickname, roomnumber, jorc):
                     my_string = my_string[:-1]
                 elif evt.key == K_RETURN:
                     flag=0
-                    #connection.Send({"action": "playermove", "message": my_string})
+                    connection.Send({"action": "chatroom", "message": my_string, "room": roomnumber, "user": nickname})
                     my_string = ""
                 elif evt.key == K_SPACE:
                     if flag==0:

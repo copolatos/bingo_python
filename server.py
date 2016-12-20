@@ -34,6 +34,9 @@ class ClientChannel(Channel):
 	# def Network_joinroom(self):
 	# 	self.Send({"action": "user", "username": })
 
+	def Network_chatroom(self, data):
+		self._server.SendToAll({"action": "chatroom", "user": data["user"], "room": data["room"], "message": data["message"]})
+
 	def Network_createlobby(self, data):
 		room[data["room"]]=[data["user"]]
 		rooms.append(data["room"])
@@ -122,5 +125,5 @@ class ChatServer(Server):
 			self.Pump()
 			sleep(0.0001)
 
-s = ChatServer(localaddr=("localhost", 55555))
+s = ChatServer(localaddr=("192.168.1.25", 55555))
 s.Launch()
